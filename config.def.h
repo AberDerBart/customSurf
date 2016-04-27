@@ -81,6 +81,11 @@ static SiteStyle styles[] = {
   "mv ~/.surf/bookmarks_new ~/.surf/bookmarks", \
   winid, NULL } }
 
+#define WATCH {.v = (char *[]){ "/bin/sh", "-c", \
+    "st -e /bin/bash ~/ownCloud/scripts/watch.sh $(xprop -id $0 _SURF_URI | cut -d \\\" -f 2)", \
+    winid, NULL } \
+}
+
 #define MODKEY GDK_CONTROL_MASK
 
 /* hotkeys */
@@ -113,6 +118,7 @@ static Key keys[] = {
 	{ MODKEY,               GDK_i,      scroll_h,   { .i = +1 } },
 	{ MODKEY,               GDK_u,      scroll_h,   { .i = -1 } },
 	{ MODKEY,               GDK_b,      spawn,      BM_ADD },
+	{ MODKEY|GDK_SHIFT_MASK,GDK_y,      spawn, 	WATCH },
 
 	{ 0,                    GDK_F11,    fullscreen, { 0 } },
 	{ 0,                    GDK_Escape, stop,       { 0 } },
