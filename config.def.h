@@ -37,9 +37,9 @@ static Bool allowgeolocation      = TRUE;
 
 #define SETPROP(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
-	     "prop=\"`xprop -id $2 $0 " \
+	     "prop=\"`(xprop -id $2 $0 " \
 	     "| sed \"s/^$0(STRING) = \\(\\\\\"\\?\\)\\(.*\\)\\1$/\\2/\" " \
-	     "| xargs -0 printf %b | dmenu`\" &&" \
+	     "| xargs -0 printf %b && cat ~/.surf/bookmarks) | dmenu`\" &&" \
 	     "xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
 	     p, q, winid, NULL \
 	} \
@@ -75,6 +75,12 @@ static SiteStyle styles[] = {
 	{ ".*",                 "default.css" },
 };
 
+#define BM_ADD { .v = (char *[]){ "/bin/sh", "-c", \
+  "(echo `xprop -id $0 _SURF_URI | cut -d '\"' -f 2` && "\
+  "cat ~/.surf/bookmarks) | awk '!seen[$0]++' > ~/.surf/bookmarks_new && "\
+  "mv ~/.surf/bookmarks_new ~/.surf/bookmarks", \
+  winid, NULL } }
+
 #define MODKEY GDK_CONTROL_MASK
 
 /* hotkeys */
@@ -106,6 +112,7 @@ static Key keys[] = {
 	{ MODKEY,               GDK_space,  scroll_v,   { .i = +10000 } },
 	{ MODKEY,               GDK_i,      scroll_h,   { .i = +1 } },
 	{ MODKEY,               GDK_u,      scroll_h,   { .i = -1 } },
+	{ MODKEY,               GDK_b,      spawn,      BM_ADD },
 
 	{ 0,                    GDK_F11,    fullscreen, { 0 } },
 	{ 0,                    GDK_Escape, stop,       { 0 } },
